@@ -87,6 +87,32 @@ def readentry (input_cif):
         newcif.assign_bonds()
         file.close()   
     return (newcif)
+    
+def readSBU (input_mol2):
+    """MOSAEC cnan now handle SBUs, but expectes them to be in .mol2"""
+    #First have to convert the connection points (unknown atom types)
+    #to H. Has to be done as a string so CSD reader can 
+    #interpret bonding
+    with open(input_mol2, 'r') as file:
+        file.seek(0)
+        newstring = str()
+        lines = file.readlines()
+        for i, line in enumerate(lines):
+            if '*' in line:
+                lines[i] = lines[i].replace('Du', 'H')
+            newstring += lines[i]    
+        cif = crystal.Crystal.from_string(newstring, format='mol2')
+        cif.assign_bonds()
+        file.close()
+
+    mol = cif.molecule
+    #MOSAEC needs atoms to have unique labels, so make them unique
+    count = 1
+    for atom in mol.atoms:
+        atom.label = f'{atom.label}{count}'
+        count += 1
+
+    return(mol)
 
 def read_CSD_entry (input_cif):
     """read entries directly from the CSD"""
@@ -1528,7 +1554,10 @@ ZeroVectorlist = []
 
 for file in os.listdir(cwd):
     if all([
-          (str(file).endswith('.cif') == True),
+          (any([
+              (str(file).endswith('.cif') == True),
+              (str(file).endswith('.mol2') == True),
+              ])),
           (not str(file).startswith('._')),
           ]):
         print (f'Analyzing {file}...')
@@ -1537,14 +1566,17 @@ for file in os.listdir(cwd):
         # identify the unique sites, metal sites, binding sites,
         # ect.
         #print ('reading .cif data')
-        try:
-          cif = readentry(input_cif)
-        except RuntimeError:
-          ZeroVectorlist.append(file)
-          continue
-        #cif = readCSD_MOF_collectionentry(input_cif)
-        mol = cif.molecule
-        asymmol = cif.asymmetric_unit_molecule
+        if str(file).endswith('.cif'):
+          try:
+            cif = readentry(input_cif)
+            mol = cif.molecule
+            asymmol = cif.asymmetric_unit_molecule
+          except RuntimeError:
+            ZeroVectorlist.append(file)
+            continue
+        if str(file).endswith('.mol2'):
+          mol = readSBU(file)
+          asymmol = readSBU(file)
         #print ('identifying unique sites')
         uniquesites = get_unique_sites(mol, asymmol)
         usitedict = {}
