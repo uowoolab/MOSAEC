@@ -24,19 +24,19 @@ python <path to MOSAEC directory>/mosaec.py
 ```
 
 ## Output
-MOSAEC outputs a summary of the oxidation states and error flags in a .csv file. This file contains a separate row for each crystallographically unique metal atom site in the given structures. If **any** of the error flag columns for any metal in a given structure contains the "BAD" or "LIKELY_BAD" designation, the structure is likely to possess issues.
+MOSAEC outputs a summary of the oxidation states and error flags in a .csv file. This file contains a separate row for each crystallographically unique metal atom site in the given structures. If **any** of the error flag columns for any metal in a given structure contains the "BAD" or "LIKELY_BAD" designation, the structure is likely to possess issues. Electron counts are currently experimental, under development, and have not been validated. Not reccomended for use.
 
 **OxStatesOutput.csv** — Description of Columns:
 | Column Header | Description |
 | -------------- | -------------- |
 | `CIF` | structure file name |
 | `Metal` | metal atom label |
-| `ON_coordination_ONLY` | oxidation state computed by sharing across binding domains (localized distribution) |
-| `EC_coordination_ONLY` | electron count computed by sharing across binding domains (localized distribution) |
+| `ON_coordination_ONLY` | oxidation state computed by sharing across binding domains (localized distribution) without account for outer sphere charge |
+| `EC_coordination_ONLY` | electron count computed by sharing across binding domains (localized distribution) without accounting for outer sphere charge |
 | `ON_coordination+Outer_Sphere` | oxidation state computed by sharing across binding domains & distributing outer sphere charge (partially localized distribution) |
 | `EC_coordination+Outer_Sphere` | electron count computed by sharing across binding domains & distributing outer sphere charge (partially localized distribution) |
-| `ON_network_redistributed` | oxidation state computed by redistributing across metal networks according to IE (localized distribution) |
-| `EC_network_redistributed` | electron count computed by redistributing across metal networks according to IE (localized distribution) |
+| `ON_network_redistributed` | oxidation state computed by redistributing across metal networks according to IE (localized distribution) without accounting for outer sphere charge |
+| `EC_network_redistributed` | electron count computed by redistributing across metal networks according to IE (localized distribution) without accounting for outer sphere charge |
 | `ON_network+Outer_Sphere` | oxidation state computed by redistributing across metal networks according to IE & distributing outer sphere charge (partially localized distribution) |
 | `EC_network+Outer_Sphere` | electron count computed by redistributing across metal networks according to IE & distributing outer sphere charge (partially localized distribution) |
 | `ON_global` | oxidation state computed by global distribution of charges across all sites (delocalized distribution) |
